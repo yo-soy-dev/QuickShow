@@ -1,40 +1,74 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { dummyBookingData, dummyDateTimeData, dummyShowsData } from '../assets/assets'
 import BlurCircle from '../components/BlurCircle'
 import { Heart, PlayCircleIcon, StarIcon } from 'lucide-react'
 import timeFormat from '../lib/timeFormat'
 import DateSelect from '../components/DateSelect'
 import MovieCard from '../components/MovieCard' 
 import Loading from '../components/Loading'
+import { useAppContext } from '../context/AppContext'
+import toast from 'react-hot-toast'
 
 const MovieDetails = () => {
+
   const navigate = useNavigate()
   const { id } = useParams()
   const [show, setShow] = useState(null)
 
-  useEffect(() => {
-    const showData = dummyShowsData.find(show => show._id === id)
-    if (showData) {
-      setShow({
-        movie: showData,
-        dateTime: dummyDateTimeData
-      })
+  const { shows, axios, getToken, user, fetchFavoriteMovies, favoriteMovies, image_base_url } = useAppContext() 
+
+  const getShow = async () => {
+    try {
+      console.log("Fetching show for ID:", id);
+      const { data } = await axios.get(`/api/show/${id}`)
+      console.log("Fetched show data:", data);
+      console.log("Show inside data.show:", data.show);
+      setShow({ movie: data.movie, dateTime: data.dateTime }) 
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to load movie details")
     }
-  }, [id])
+  }
 
-  if (!show) return <Loading />
+  const handleFavorite = async () => {
+    try {
+      if (!user) return toast.error("Please login to proceed");
 
-  const { movie } = show
-  const runtime = movie.runtime ? timeFormat(movie.runtime) : 'N/A'
-  const genres = movie.genres?.map(g => g.className || g.name).filter(Boolean).join(', ') || 'No genres'
-  const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'Unknown'
+      const { data } = await axios.post(
+        '/api/user/update-favorite',
+        { movieId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`
+          }
+        }
+      );
 
-  return  (
+      if (data.success) {
+        await fetchFavoriteMovies();
+        toast.success(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getShow();
+  }, [id]);
+
+  if (!show) return <Loading />;
+
+  const { movie } = show;
+  const runtime = movie.runtime ? timeFormat(movie.runtime) : 'N/A';
+  const genres = movie.genres?.map(g => g.className || g.name).filter(Boolean).join(', ') || 'No genres';
+  const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'Unknown';
+
+  return (
     <div className='px-6 md:px-16 lg:px-40 pt-30 md:pt-50'>
       <div className='flex flex-col md:flex-row gap-8 max-w-6xl mx-auto'>
         <img
-          src={movie.poster_path}
+          src={image_base_url + movie.poster_path}
           alt={movie.title}
           className='max-md:mx-auto rounded-xl h-104 max-w-70 object-cover'
         />
@@ -63,8 +97,8 @@ const MovieDetails = () => {
             <a href="#dateSelect" className='px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer active:scale-95'>
               Buy Tickets
             </a>
-            <button className='bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95'>
-              <Heart className={`w-5 h-5`} />
+            <button onClick={handleFavorite} className='bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95'>
+              <Heart className={`w-5 h-5 ${favoriteMovies.find(movie => movie._id === id) ? 'fill-primary text-primary' : ""}`} />
             </button>
           </div>
         </div>
@@ -75,7 +109,7 @@ const MovieDetails = () => {
         <div className='flex items-center gap-4 w-max px-4'>
           {movie.casts?.slice(0, 12).map((cast, index) => (
             <div key={index} className='flex flex-col items-center text-center'>
-              <img src={cast.profile_path} alt={cast.name} className='rounded-full h-20 md:h-20 aspect-square object-cover' />
+              <img src={image_base_url + cast.profile_path} alt={cast.name} className='rounded-full h-20 md:h-20 aspect-square object-cover' />
               <p className='font-medium text-xs mt-3'>{cast.name}</p>
             </div>
           ))}
@@ -86,7 +120,7 @@ const MovieDetails = () => {
 
       <p className='text-lg font-medium mt-20 mb-8'>You May Also Like</p>
       <div className='flex flex-wrap max-sm:justify-center gap-8'>
-        {dummyShowsData.slice(0, 4).map((movie, index) => (
+        {shows.slice(0, 4).map((movie, index) => (
           <MovieCard key={index} movie={movie} />
         ))}
       </div>
@@ -97,7 +131,7 @@ const MovieDetails = () => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MovieDetails
+export default MovieDetails;

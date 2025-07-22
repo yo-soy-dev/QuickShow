@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StarIcon } from 'lucide-react';
 import timeFormat from '../lib/timeFormat';
+import { useAppContext } from '../context/AppContext';
 
 const getReleaseYear = (releaseDate) => {
   if (!releaseDate) return 'Unknown';
@@ -17,6 +18,7 @@ const getReleaseYear = (releaseDate) => {
 
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
+  const {image_base_url} = useAppContext()
 
   console.log('release date:', movie.release_Date || movie.release_date);
 
@@ -28,7 +30,7 @@ const MovieCard = ({ movie }) => {
   return (
     <div className="flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:-translate-y-1 transition duration-300 w-66">
       <img
-        src={movie.backdrop_path}
+        src={image_base_url + movie.backdrop_path}
         alt={movie.title || 'Movie Poster'}
         onClick={handleNavigation}
         className="rounded-lg h-52 w-full object-cover object-right-bottom cursor-pointer"
