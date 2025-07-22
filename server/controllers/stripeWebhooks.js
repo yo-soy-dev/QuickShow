@@ -13,7 +13,6 @@ export const stripeWebhooks = async (request, response) => {
             sig,
             process.env.STRIPE_WEBHOOK_SECRET
         );
-        console.log("✅ Stripe event received:", event);
     } catch (error) {
         return response.status(400).send(`Webhook Error: ${error.message}`);
     }
@@ -28,12 +27,8 @@ export const stripeWebhooks = async (request, response) => {
 
                 const session = sessionList.data[0];
 
-                console.log("✅ Full Stripe session object:", session);
-                console.log("📌 Metadata:", session?.metadata);
-
                 const { bookingId } = session.metadata;
 
-                console.log("📌 Booking ID extracted:", bookingId);
 
                 const updatedBooking = await Booking.findByIdAndUpdate(
                     bookingId,
@@ -41,10 +36,9 @@ export const stripeWebhooks = async (request, response) => {
                         isPaid: true,
                         paymentLink: ""
                     },
-                    { new: true } // ensures we get the updated document
+                    { new: true }
                 );
 
-                console.log("✅ Booking updated in DB:", updatedBooking);
                 break;
             }
 
