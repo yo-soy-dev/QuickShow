@@ -13,6 +13,7 @@ export const stripeWebhooks = async (request, response) => {
             sig,
             process.env.STRIPE_WEBHOOK_SECRET
         );
+        console.log("✅ Stripe event received:", event);
     } catch (error) {
         return response.status(400).send(`Webhook Error: ${error.message}`);
     }
@@ -26,21 +27,34 @@ export const stripeWebhooks = async (request, response) => {
                 });
 
                 const session = sessionList.data[0];
+
+                console.log("✅ Full Stripe session object:", session);
+                console.log("📌 Metadata:", session?.metadata);
+
                 const { bookingId } = session.metadata;
 
-                await Booking.findByIdAndUpdate(bookingId, {
-                    isPaid: true,
-                    paymentLink: ""
-                })
+                console.log("📌 Booking ID extracted:", bookingId);
+
+                const updatedBooking = await Booking.findByIdAndUpdate(
+                    bookingId,
+                    {
+                        isPaid: true,
+                        paymentLink: ""
+                    },
+                    { new: true } // ensures we get the updated document
+                );
+
+                console.log("✅ Booking updated in DB:", updatedBooking);
                 break;
             }
 
             default:
-                console.log('Unhandled event type:', event.type)
+                console.log('Unhandled event type:', event.type);
         }
-        response.json({ received: true })
+
+        response.json({ received: true });
     } catch (error) {
-        console.error("Webhook processing error:", err);
+        console.error("Webhook processing error:", error);
         response.status(200).send("Internal Server Error");
     }
 };

@@ -5,6 +5,7 @@ import { dummyBookingData } from "../assets/assets";
 import timeFormat from "../lib/timeFormat";
 import dateFormat from "../lib/dateFormat";
 import { useAppContext } from "../context/AppContext";
+import { Link } from "react-router-dom";
 
 const MyBookings = () => {
   const { axios, getToken, user, image_base_url } = useAppContext();
@@ -20,6 +21,8 @@ const MyBookings = () => {
           Authorization: `Bearer ${await getToken()}`,
         },
       });
+
+      console.log("Fetched bookings:", data.bookings);
 
       if (data.success) {
         setBookings(data.bookings);
@@ -74,9 +77,9 @@ const MyBookings = () => {
                 {item.amount}
               </p>
               {!item.isPaid && (
-                <button className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer">
+                <Link to={item.paymentLink} className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer">
                   Pay Now
-                </button>
+                </Link>
               )}
             </div>
             <div className="text-sm">
