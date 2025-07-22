@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import Booking from "../models/Booking.js";
+import { inngest } from "../inngest/index.js";
 
 export const stripeWebhooks = async (request, response) => {
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -30,7 +31,7 @@ export const stripeWebhooks = async (request, response) => {
                 const { bookingId } = session.metadata;
 
 
-                const updatedBooking = await Booking.findByIdAndUpdate(
+                await Booking.findByIdAndUpdate(
                     bookingId,
                     {
                         isPaid: true,
@@ -38,6 +39,11 @@ export const stripeWebhooks = async (request, response) => {
                     },
                     { new: true }
                 );
+
+                await inngest.send({
+                    name: "app/show.booked",
+                    data: { bookingId }
+                })
 
                 break;
             }
