@@ -52,14 +52,16 @@ const ListShows = () => {
                 key={index}
                 className="border-b border-primary/10 bg-primary/5 even:bg-primary/10"
               >
-                <td className="p-2 min-w-45 pl-5">{show.movie.title}</td>
-                <td className="p-2">{dateFormat(show.showDateTime)}</td>
+                <td className="p-2 min-w-45 pl-5">{show.movie?.title || 'Unknown Movie'}</td>
+                <td className="p-2">{show.showDateTime ? dateFormat(show.showDateTime) : 'N/A'}</td>
                 <td className="p-2">
-                  {Object.keys(show.occupiedSeats).length}
+                  {show.occupiedSeats ? Object.keys(show.occupiedSeats).length : 0}
                 </td>
                 <td className="p-2">
                   {currency}{" "}
-                  {Object.keys(show.occupiedSeats).length * show.showPrice}
+                  {show.occupiedSeats
+                    ? Object.keys(show.occupiedSeats).length * (show.showPrice || 0)
+                    : 0}
                 </td>
               </tr>
             ))}
