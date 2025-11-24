@@ -165,6 +165,7 @@ npx inngest dev
 ## 📸 App Preview
 
 <img width="1845" height="872" alt="image" src="https://github.com/user-attachments/assets/ada7bf33-ffc0-4fb0-91c1-655aaee7238d" />
+
 <img width="1842" height="813" alt="image" src="https://github.com/user-attachments/assets/6f22d5f3-3a53-4c34-b267-be14bbe31848" />
 
 
