@@ -1,5 +1,5 @@
 
-# Movie Ticket Booking Website (MERN Stack)
+# QUICKSHOW - Movie Ticket Booking Website (MERN Stack)
 
 A full‑stack Movie Ticket Booking Platform built using the **MERN stack**, featuring seat selection, user authentication with **Clerk**, admin dashboard for movie & booking management, and background job handling using **Inngest**.
 
@@ -162,9 +162,10 @@ npx inngest dev
 
 ---
 
-## 📸 Screenshots (Optional)
+## 📸 UI Preview
 
-*Add UI screenshots or GIFs here*
+<img width="1845" height="872" alt="image" src="https://github.com/user-attachments/assets/ada7bf33-ffc0-4fb0-91c1-655aaee7238d" />
+
 
 ---
 
