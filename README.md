@@ -1,5 +1,5 @@
 
-# QUICKSHOW - Movie Ticket Booking Website (MERN Stack)
+# 🎬 QuickShow — MERN Movie Ticket Booking Application
 
 A full‑stack Movie Ticket Booking Platform built using the **MERN stack**, featuring seat selection, user authentication with **Clerk**, admin dashboard for movie & booking management, and background job handling using **Inngest**.
 
@@ -162,9 +162,11 @@ npx inngest dev
 
 ---
 
-## 📸 UI Preview
+## 📸 App Preview
 
 <img width="1845" height="872" alt="image" src="https://github.com/user-attachments/assets/ada7bf33-ffc0-4fb0-91c1-655aaee7238d" />
+<img width="1842" height="813" alt="image" src="https://github.com/user-attachments/assets/6f22d5f3-3a53-4c34-b267-be14bbe31848" />
+
 
 
 ---
